@@ -12,14 +12,17 @@ async function gateaway() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup("api", app, document);
+  SwaggerModule.setup("api", app, document, {
+    swaggerOptions: {
+      docExpansion: 'none', // 'none' | 'list' | 'full'
+    }
+  });
 
-  // Включаем CORS
-  app.enableCors();
+  app.enableCors(); // Включение CORS
 
-  const port = process.env.PORT || 5000;
-  await app.listen(port);
+  const PORT = process.env.PORT || 5000;
+  await app.listen(PORT);
 
-  console.log(`Gateway running on: http://localhost:${port}`);
+  console.log(`Gateway running on: http://localhost:${PORT}`);
 }
 gateaway();
