@@ -2,7 +2,7 @@ import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
-async function bootstrap() {
+async function gateaway() {
   const app = await NestFactory.create(AppModule);
 
   const config = new DocumentBuilder()
@@ -22,4 +22,4 @@ async function bootstrap() {
 
   console.log(`Gateway running on: http://localhost:${port}`);
 }
-bootstrap();
+gateaway();
