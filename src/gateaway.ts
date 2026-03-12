@@ -1,28 +1,39 @@
-import { NestFactory } from "@nestjs/core";
-import { AppModule } from "./app.module";
+import { NestFactory } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { AppModule } from './app.module';
 
 async function gateaway() {
   const app = await NestFactory.create(AppModule);
 
+  // Валидация
+  app.useGlobalPipes(new ValidationPipe({
+    whitelist: true,
+    forbidNonWhitelisted: true,
+    transform: true,
+  }));
+
+  // Swagger
   const config = new DocumentBuilder()
-    .setTitle("Шлюз проекта car-rent")
-    .setDescription("Полное описание всех ЭП")
-    .setVersion("1.0")
+    .setTitle('Car Rent API Gateway')
+    .setDescription('Документация для API Gateway проекта car-rent')
+    .setVersion('1.0')
+    .addTag('Authentication')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup("api", app, document, {
+  SwaggerModule.setup('api', app, document, {
     swaggerOptions: {
-      docExpansion: 'none', // 'none' | 'list' | 'full'
-    }
+      docExpansion: 'none',
+    },
   });
 
-  app.enableCors(); // Включение CORS
+  app.enableCors();
 
   const PORT = process.env.PORT || 5000;
   await app.listen(PORT);
 
   console.log(`Gateway running on: http://localhost:${PORT}`);
+  console.log(`Swagger: http://localhost:${PORT}/api`);
 }
 gateaway();
