@@ -5,6 +5,7 @@ import { AppModule } from './app.module';
 
 async function gateaway() {
   const app = await NestFactory.create(AppModule);
+  app.setGlobalPrefix('api')
 
   // Валидация
   app.useGlobalPipes(new ValidationPipe({

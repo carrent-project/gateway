@@ -8,7 +8,7 @@ import {
 } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
 import { firstValueFrom } from "rxjs";
-import { LoginDto, RegisterDto, TokenResponseDto } from "./dto/auth.dto";
+import { LoginDto, RegisterDto, TokenResponseDto } from '@carrent/shared';
 
 @Injectable()
 export class AuthService {
