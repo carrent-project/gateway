@@ -28,7 +28,6 @@ export class AuthService {
         );
       }
 
-      // Ошибка от микросервиса может быть в error.response или самом error
       const responseError = error.response || error;
 
       if (responseError?.statusCode === 401) {
