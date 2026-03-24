@@ -8,15 +8,28 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get('hi')
-  @ApiOperation({ summary: 'Приветствие' })
+  @ApiOperation({ summary: 'Greeting' })
   @ApiResponse({ 
     status: 200, 
-    description: 'Пользователи успешно получены',
+    description: 'Hello friend',
     type: Function
   })
   @ApiResponse({ status: 400, description: 'Some error has occured' })
   @ApiResponse({ status: 503, description: 'Server does not works' })
-  async register(): Promise<any> {
+  async sayHi(): Promise<any> {
     return this.usersService.sayHi();
+  }
+
+  @Get('all-users')
+  @ApiOperation({ summary: 'Getting all users' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'All users recieved successfully',
+    type: Function
+  })
+  @ApiResponse({ status: 400, description: 'Some error has occured' })
+  @ApiResponse({ status: 503, description: 'Server does not works' })
+  async getUsers(): Promise<any> {
+    return this.usersService.getUsers();
   }
 }
