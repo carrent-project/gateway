@@ -17,6 +17,9 @@ export class UsersService {
 
   async getUsers() {
     return await firstValueFrom(this.usersClient.send("users.get-users", {}))
+  }
 
+  async getUserById(id: string) {
+    return await firstValueFrom(this.usersClient.send("users.user-by-id", { id }))
   }
 }
