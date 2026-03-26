@@ -1,13 +1,13 @@
-import { Controller, Get, Param, Query } from "@nestjs/common";
+import { Controller, Get, Param, Query, UseGuards } from "@nestjs/common";
 import {
   ApiTags,
   ApiOperation,
   ApiResponse,
-  ApiBody,
   ApiQuery,
 } from "@nestjs/swagger";
 import { UsersService } from "./users.service";
 import { PaginatedUsersResponse, User } from "@carrent/shared";
+import { AuthGuard } from "../auth/auth.guard";
 
 @ApiTags("Users")
 @Controller("users")
@@ -32,7 +32,8 @@ export class UsersController {
   }
 
   @Get("all-users")
-  @ApiOperation({ summary: "Getting all users" })
+  @UseGuards(AuthGuard)
+  @ApiOperation({ summary: "Getting all users with pagination and filters" })
   @ApiResponse({
     status: 200,
     description: "All users recieved successfully",
@@ -62,13 +63,15 @@ export class UsersController {
   })
   @ApiResponse({ status: 400, description: "Some error has occured" })
   @ApiResponse({ status: 503, description: "Server does not works" })
+  @ApiQuery({ name: "search", required: false, type: String, example: "" })
   @ApiQuery({ name: "page", required: false, type: Number, example: 1 })
   @ApiQuery({ name: "limit", required: false, type: Number, example: 10 })
   async getUsers(
+    @Query("search") search: string = "",
     @Query("page") page: string = "1",
     @Query("limit") limit: string = "10",
   ): Promise<PaginatedUsersResponse> {
-    return this.usersService.getUsers(+page, +limit);
+    return this.usersService.getUsers(search, +page, +limit);
   }
 
   @Get("user-by-id/:id")

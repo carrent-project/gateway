@@ -15,8 +15,8 @@ export class UsersService {
     return await firstValueFrom(this.usersClient.send("users.list", {}))
   }
 
-  async getUsers(page: number, limit: number) {
-    return await firstValueFrom(this.usersClient.send("users.get-users", { page, limit }))
+  async getUsers(search: string, page: number, limit: number) {
+    return await firstValueFrom(this.usersClient.send("users.get-users", { search, page, limit }))
   }
 
   async getUserById(id: string) {
