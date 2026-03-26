@@ -21,6 +21,7 @@ async function gateaway() {
     .setDescription('Документация для API Gateway проекта car-rent')
     .setVersion('1.0')
     .addTag('Authentication')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

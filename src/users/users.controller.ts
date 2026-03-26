@@ -4,6 +4,7 @@ import {
   ApiOperation,
   ApiResponse,
   ApiQuery,
+  ApiBearerAuth,
 } from "@nestjs/swagger";
 import { UsersService } from "./users.service";
 import { PaginatedUsersResponse, User } from "@carrent/shared";
@@ -33,6 +34,7 @@ export class UsersController {
 
   @Get("all-users")
   @UseGuards(AuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: "Getting all users with pagination and filters" })
   @ApiResponse({
     status: 200,
