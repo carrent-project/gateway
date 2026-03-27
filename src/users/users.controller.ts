@@ -48,13 +48,12 @@ export class UsersController {
           name: "teest",
           createdAt: "2026-03-19T18:12:34.112Z",
           updatedAt: "2026-03-19T18:12:34.112Z",
-        },
-        {
-          id: "2ddac8d3-341a-425c-9165-f42034786ac5",
-          email: "dimas@kaban.ru",
-          name: "Kaban D.A.",
-          createdAt: "2026-03-11T18:24:54.589Z",
-          updatedAt: "2026-03-11T18:24:54.589Z",
+          roles: [
+            {
+              roleName: "user",
+              roleDescription: "Пользователь",
+            },
+          ],
         },
       ],
       total: 107,
@@ -88,6 +87,12 @@ export class UsersController {
       name: "teest",
       createdAt: "2026-03-19T18:12:34.112Z",
       updatedAt: "2026-03-19T18:12:34.112Z",
+      roles: [
+        {
+          roleName: "user",
+          roleDescription: "Пользователь",
+        },
+      ],
     },
   })
   @ApiResponse({ status: 400, description: "Some error has occured" })
