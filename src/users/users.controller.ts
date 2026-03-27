@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query, UseGuards } from "@nestjs/common";
+import { Controller, Delete, Get, Param, Query, UseGuards } from "@nestjs/common";
 import {
   ApiTags,
   ApiOperation,
@@ -99,5 +99,17 @@ export class UsersController {
   @ApiResponse({ status: 503, description: "Server does not works" })
   async getUserById(@Param("id") id: string): Promise<User> {
     return this.usersService.getUserById(id);
+  }
+
+  @Delete("remove-user-by-id/:id")
+  @ApiOperation({ summary: "Removing user by id" })
+  @ApiResponse({
+    status: 200,
+    description: "User successfully removed by id"
+  })
+  @ApiResponse({ status: 400, description: "Some error has occured" })
+  @ApiResponse({ status: 503, description: "Server does not works" })
+  async removeUserById(@Param("id") id: string) {
+    return this.usersService.removeUserById(id);
   }
 }
