@@ -1,10 +1,7 @@
-import { Controller, Get } from "@nestjs/common";
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-} from "@nestjs/swagger";
+import { Body, Controller, Get, Post } from "@nestjs/common";
+import { ApiTags, ApiOperation, ApiResponse, ApiBody } from "@nestjs/swagger";
 import { UsersService } from "./users.service";
+import { ICreateRoleDto, ICreateRoleResponse } from '@carrent/shared';
 
 @ApiTags("Roles")
 @Controller("roles")
@@ -41,8 +38,32 @@ export class RolesController {
   })
   @ApiResponse({ status: 400, description: "Some error has occured" })
   @ApiResponse({ status: 503, description: "Server does not works" })
-  async getRoles(
-  ): Promise<{id: number, name: string, description: string}> {
+  async getRoles(): Promise<{ id: number; name: string; description: string }> {
     return this.usersService.getRoles();
+  }
+
+  @Post("add-role")
+  @ApiOperation({ summary: "Creating new role" })
+  @ApiBody({
+    type: ICreateRoleDto,
+    examples: {
+      default: {
+        value: {
+          name: "example_role",
+          description: "This is just an example role"
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 201,
+    description: "Role is successfully created",
+    type: ICreateRoleResponse,
+  })
+  @ApiResponse({ status: 409, description: "Роль уже существует" })
+  @ApiResponse({ status: 400, description: "Неверные данные" })
+  @ApiResponse({ status: 503, description: "Сервис обработки пользователей недоступен" })
+  async addRole(@Body() dto: ICreateRoleDto): Promise<ICreateRoleResponse> {
+    return this.usersService.addRole(dto);
   }
 }

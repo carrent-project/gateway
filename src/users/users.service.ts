@@ -1,3 +1,4 @@
+import { ICreateRoleDto, ICreateRoleResponse } from '@carrent/shared';
 import {
   Injectable,
   Inject,
@@ -29,5 +30,9 @@ export class UsersService {
 
   async getRoles() {
     return await firstValueFrom(this.usersClient.send("roles.list", {}))
+  }
+
+  async addRole(data: ICreateRoleDto): Promise<ICreateRoleResponse> {
+    return await firstValueFrom(this.usersClient.send('roles.add', data))
   }
 }
