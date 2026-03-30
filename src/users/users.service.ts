@@ -35,4 +35,8 @@ export class UsersService {
   async addRole(data: ICreateRoleDto): Promise<ICreateRoleResponse> {
     return await firstValueFrom(this.usersClient.send('roles.add', data))
   }
+
+  async removeRoleByName(roleName: string) {
+    return await firstValueFrom(this.usersClient.send("roles.remove", { roleName }))
+  }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from "@nestjs/swagger";
 import { UsersService } from "./users.service";
 import { ICreateRoleDto, ICreateRoleResponse } from '@carrent/shared';
@@ -65,5 +65,18 @@ export class RolesController {
   @ApiResponse({ status: 503, description: "Сервис обработки пользователей недоступен" })
   async addRole(@Body() dto: ICreateRoleDto): Promise<ICreateRoleResponse> {
     return this.usersService.addRole(dto);
+  }
+
+  @Delete("remove-role/:roleName")
+  @ApiOperation({ summary: "Removing role by name" })
+  @ApiResponse({
+    status: 200,
+    description: "Role successfully removed by name"
+  })
+  @ApiResponse({ status: 404, description: "Role has not found" })
+  @ApiResponse({ status: 503, description: "Server does not works" })
+  async removeRoleByName(@Param("roleName") roleName: string) {
+        console.log("==> roleName 777 : ", roleName);
+    return this.usersService.removeRoleByName(roleName)
   }
 }
