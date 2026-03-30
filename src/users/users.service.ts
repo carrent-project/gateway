@@ -26,4 +26,8 @@ export class UsersService {
   async removeUserById(id: string) {
     return await firstValueFrom(this.usersClient.send("users.remove-user", { id }))
   }
+
+  async getRoles() {
+    return await firstValueFrom(this.usersClient.send("roles.list", {}))
+  }
 }
