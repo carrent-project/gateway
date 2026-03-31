@@ -1,4 +1,4 @@
-import { ICreateRoleDto, ICreateRoleResponse } from '@carrent/shared';
+import { ICreateRoleDto, ICreateRoleResponse, UpdateUserDto } from '@carrent/shared';
 import {
   Injectable,
   Inject,
@@ -26,6 +26,10 @@ export class UsersService {
 
   async removeUserById(id: string) {
     return await firstValueFrom(this.usersClient.send("users.remove-user", { id }))
+  }
+
+  async updateUser(dto: UpdateUserDto) {
+    return await firstValueFrom(this.usersClient.send("users.update-user", dto))
   }
 
   async getRoles() {

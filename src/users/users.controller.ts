@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Param, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Put, Query, UseGuards } from "@nestjs/common";
 import {
   ApiTags,
   ApiOperation,
@@ -7,7 +7,7 @@ import {
   ApiBearerAuth,
 } from "@nestjs/swagger";
 import { UsersService } from "./users.service";
-import { PaginatedUsersResponse, User } from "@carrent/shared";
+import { PaginatedUsersResponse, UpdateUserDto, User } from "@carrent/shared";
 import { AuthGuard } from "../auth/auth.guard";
 
 @ApiTags("Users")
@@ -111,5 +111,17 @@ export class UsersController {
   @ApiResponse({ status: 503, description: "Server does not works" })
   async removeUserById(@Param("id") id: string) {
     return this.usersService.removeUserById(id);
+  }
+
+  @Put("update-user")
+  @ApiOperation({ summary: "Updating user" })
+  @ApiResponse({
+    status: 200,
+    description: "User successfully updated"
+  })
+  @ApiResponse({ status: 400, description: "Some error has occured" })
+  @ApiResponse({ status: 503, description: "Server does not works" })
+  async updateUser(@Body() dto: UpdateUserDto) {
+    return this.usersService.updateUser(dto)
   }
 }

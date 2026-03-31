@@ -76,7 +76,6 @@ export class RolesController {
   @ApiResponse({ status: 404, description: "Role has not found" })
   @ApiResponse({ status: 503, description: "Server does not works" })
   async removeRoleByName(@Param("roleName") roleName: string) {
-        console.log("==> roleName 777 : ", roleName);
     return this.usersService.removeRoleByName(roleName)
   }
 }
