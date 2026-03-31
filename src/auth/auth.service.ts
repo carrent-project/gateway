@@ -5,10 +5,11 @@ import {
   ConflictException,
   ServiceUnavailableException,
   InternalServerErrorException,
+  NotFoundException,
 } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
 import { firstValueFrom } from "rxjs";
-import { LoginDto, RegisterDto, TokenResponseDto } from '@carrent/shared';
+import { LoginDto, RegisterDto, TokenResponseDto, UpdateUserPasswordDto } from '@carrent/shared';
 
 @Injectable()
 export class AuthService {
@@ -81,6 +82,31 @@ export class AuthService {
 
       console.error("Register error:", error);
       throw new InternalServerErrorException("Ошибка при регистрации");
+    }
+  }
+
+  async updateUserPassword(dto: UpdateUserPasswordDto): Promise<string> {
+    try {
+      return await firstValueFrom(this.authClient.send("auth.change-password", dto));
+    } catch (error) {
+      console.log("Error from microservice:", JSON.stringify(error, null, 2));
+
+      if (error.code === "ECONNREFUSED") {
+        throw new ServiceUnavailableException("Сервис авторизации временно недоступен");
+      }
+
+      const statusCode = error.statusCode || error.status;
+
+      if (statusCode === 401) {
+        throw new UnauthorizedException("Invalid old password");
+      }
+
+      if (statusCode === 404) {
+        throw new NotFoundException(`User "${dto.email}" not found`);
+      }
+
+      console.error("Update password error:", error);
+      throw new InternalServerErrorException("Error while PW changing");
     }
   }
 }

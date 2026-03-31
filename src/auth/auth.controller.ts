@@ -1,7 +1,8 @@
-import { Controller, Post, Body, HttpCode, HttpStatus } from "@nestjs/common";
-import { ApiTags, ApiOperation, ApiResponse, ApiBody } from "@nestjs/swagger";
+import { Controller, Post, Body, HttpCode, HttpStatus, Put, UseGuards } from "@nestjs/common";
+import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth } from "@nestjs/swagger";
 import { AuthService } from "./auth.service";
-import { RegisterDto, LoginDto, TokenResponseDto } from "@carrent/shared";
+import { RegisterDto, LoginDto, TokenResponseDto, UpdateUserPasswordDto } from "@carrent/shared";
+import { AuthGuard } from './auth.guard';
 
 @ApiTags("Authentication")
 @Controller("auth")
@@ -57,5 +58,32 @@ export class AuthController {
   @ApiResponse({ status: 503, description: "Сервис авторизации недоступен" })
   async login(@Body() dto: LoginDto): Promise<TokenResponseDto> {
     return this.authService.login(dto);
+  }
+
+  @Put("change-password")
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: "changing password" })
+  @ApiBody({
+    type: UpdateUserPasswordDto,
+    examples: {
+      default: {
+        value: {
+          email: "kaban@dimas.ru",
+          oldPassword: "111111",
+          newPassword: "222222"
+        },
+      },
+    }
+  })
+  @ApiResponse({
+    status: 201,
+    description: "Password has changed",
+  })
+  @ApiResponse({ status: 401, description: "Invalid password or email" })
+  @ApiResponse({ status: 503, description: "Service currently is not available" })
+  async updateUserPassword(@Body() dto: UpdateUserPasswordDto): Promise<string> {
+    return this.authService.updateUserPassword(dto);
   }
 }
