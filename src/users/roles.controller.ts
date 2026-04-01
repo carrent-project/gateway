@@ -1,7 +1,7 @@
-import { Body, Controller, Delete, Get, Param, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from "@nestjs/swagger";
 import { UsersService } from "./users.service";
-import { ICreateRoleDto, ICreateRoleResponse } from '@carrent/shared';
+import { ICreateRoleDto, ICreateRoleResponse, UpdateRoleByNameDto } from '@carrent/shared';
 
 @ApiTags("Roles")
 @Controller("roles")
@@ -78,4 +78,29 @@ export class RolesController {
   async removeRoleByName(@Param("roleName") roleName: string) {
     return this.usersService.removeRoleByName(roleName)
   }
+
+  @Put('edit-role')
+  @ApiOperation({ summary: "Change role name" })
+  @ApiBody({
+    type: UpdateRoleByNameDto,
+    examples: {
+      default: {
+        value: {
+          oldRole: 'manager',
+          newRole: 'super-manager'
+        }
+      }
+    }
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Role successfully changed'
+  })
+  @ApiResponse({ status: 400, description: "Something wrong with oldRole" })
+  @ApiResponse({ status: 503, description: "Server does not works" })
+  async updateRoleByName(@Body() dto: UpdateRoleByNameDto) {
+    return this.usersService.updateRoleByName(dto)
+  }
+
+
 }
