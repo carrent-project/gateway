@@ -10,7 +10,6 @@ async function gateaway() {
 
   // Валидация
   app.useGlobalPipes(new ValidationPipe({
-    whitelist: true,
     forbidNonWhitelisted: true,
     transform: true,
   }));

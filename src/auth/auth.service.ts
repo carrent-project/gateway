@@ -6,10 +6,11 @@ import {
   ServiceUnavailableException,
   InternalServerErrorException,
   NotFoundException,
+  BadRequestException,
 } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
 import { firstValueFrom } from "rxjs";
-import { LoginDto, RegisterDto, TokenResponseDto, UpdateUserPasswordDto } from '@carrent/shared';
+import { LoginDto, RegisterDto, TokenResponseDto, UpdateUserPasswordDto, UpdateUserRolesDto } from '@carrent/shared';
 
 @Injectable()
 export class AuthService {
@@ -107,6 +108,23 @@ export class AuthService {
 
       console.error("Update password error:", error);
       throw new InternalServerErrorException("Error while PW changing");
+    }
+  }
+
+  async updateUserRoles(dto: UpdateUserRolesDto, userId: string): Promise<{ message: string }> {
+    try {
+      return await firstValueFrom(this.authClient.send('auth.update-roles-list', { dto, userId }))
+    } catch (error) {
+      const responseError = error.response || error;
+      const statusCode = responseError?.statusCode;
+      const message = responseError?.message || 'Update users roles failed';
+
+      if (statusCode === 400) {
+        throw new BadRequestException(message);
+      }
+
+      console.error("Update User roles error:", error);
+      throw new InternalServerErrorException("Error while changing roles");
     }
   }
 }
