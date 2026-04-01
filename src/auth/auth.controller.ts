@@ -16,9 +16,10 @@ export class AuthController {
     examples: {
       default: {
         value: {
-          email: "kaban@dimas.ru",
+          email: "insert@email.ru",
           password: "654321",
-          name: "Kaban D.A.",
+          name: "user name",
+          phone: "79999999999"
         },
       },
     },
@@ -45,6 +46,7 @@ export class AuthController {
         value: {
           email: "kaban@dimas.ru",
           password: "654321",
+          phone: "79995477830"
         },
       },
     }
@@ -72,7 +74,8 @@ export class AuthController {
         value: {
           email: "kaban@dimas.ru",
           oldPassword: "111111",
-          newPassword: "222222"
+          newPassword: "222222",
+          phone: "79000000000"
         },
       },
     }

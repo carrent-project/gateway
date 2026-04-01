@@ -20,6 +20,7 @@ export class RolesController {
     //       id: "1633487b-8491-4ecf-8603-2aa9c5145377",
     //       email: "testov2@test.ru",
     //       name: "teest",
+    //       phone: "79090000000",
     //       createdAt: "2026-03-19T18:12:34.112Z",
     //       updatedAt: "2026-03-19T18:12:34.112Z",
     //       roles: [

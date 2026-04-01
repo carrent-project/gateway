@@ -12,10 +12,6 @@ export class UsersService {
     @Inject("USERS_SERVICE") private readonly usersClient: ClientProxy,
   ) {}
 
-  async sayHi() {
-    return await firstValueFrom(this.usersClient.send("users.list", {}))
-  }
-
   async getUsers(search: string, page: number, limit: number) {
     return await firstValueFrom(this.usersClient.send("users.get-users", { search, page, limit }))
   }

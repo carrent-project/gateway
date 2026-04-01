@@ -1,4 +1,13 @@
-import { Body, Controller, Delete, Get, Param, Put, Query, UseGuards } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Put,
+  Query,
+  UseGuards,
+} from "@nestjs/common";
 import {
   ApiTags,
   ApiOperation,
@@ -15,23 +24,6 @@ import { AuthGuard } from "../auth/auth.guard";
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Get("hi")
-  @ApiOperation({ summary: "Greeting" })
-  @ApiResponse({
-    status: 200,
-    description: "Hello friend",
-    content: {
-      "text/plain": {
-        example: "This is just greetng to make sure gatway is works",
-      },
-    },
-  })
-  @ApiResponse({ status: 400, description: "Some error has occured" })
-  @ApiResponse({ status: 503, description: "Server does not works" })
-  async sayHi(): Promise<any> {
-    return this.usersService.sayHi();
-  }
-
   @Get("all-users")
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
@@ -46,6 +38,7 @@ export class UsersController {
           id: "1633487b-8491-4ecf-8603-2aa9c5145377",
           email: "testov2@test.ru",
           name: "teest",
+          phone: "79090000000",
           createdAt: "2026-03-19T18:12:34.112Z",
           updatedAt: "2026-03-19T18:12:34.112Z",
           roles: [
@@ -85,6 +78,7 @@ export class UsersController {
       id: "1633487b-8491-4ecf-8603-2aa9c5145377",
       email: "testov2@test.ru",
       name: "teest",
+      phone: "79090000000",
       createdAt: "2026-03-19T18:12:34.112Z",
       updatedAt: "2026-03-19T18:12:34.112Z",
       roles: [
@@ -105,7 +99,7 @@ export class UsersController {
   @ApiOperation({ summary: "Removing user by id" })
   @ApiResponse({
     status: 200,
-    description: "User successfully removed by id"
+    description: "User successfully removed by id",
   })
   @ApiResponse({ status: 400, description: "Some error has occured" })
   @ApiResponse({ status: 503, description: "Server does not works" })
@@ -117,11 +111,17 @@ export class UsersController {
   @ApiOperation({ summary: "Updating user" })
   @ApiResponse({
     status: 200,
-    description: "User successfully updated"
+    description: "User successfully updated",
+    example: {
+      id: "b1b37842-3703-4e15-af1c-8532ce32abe1",
+      email: "OOO_Tion@mail.ru",
+      name: "Kabanov Alexey",
+      phone: "79109722144",
+    },
   })
   @ApiResponse({ status: 400, description: "Some error has occured" })
   @ApiResponse({ status: 503, description: "Server does not works" })
   async updateUser(@Body() dto: UpdateUserDto) {
-    return this.usersService.updateUser(dto)
+    return this.usersService.updateUser(dto);
   }
 }
