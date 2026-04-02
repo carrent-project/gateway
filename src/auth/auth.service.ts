@@ -63,26 +63,14 @@ export class AuthService {
         );
       }
 
-      const responseError = error.response;
+      const responseError = error.response || error;
 
       if (responseError?.statusCode === 409) {
-        throw new ConflictException(
-          "Пользователь с таким email уже существует",
-        );
-      }
-
-      if (responseError?.statusCode === 401) {
-        throw new UnauthorizedException("Неверный email или пароль");
-      }
-
-      if (error.message?.includes("already exists")) {
-        throw new ConflictException(
-          "Пользователь с таким email уже существует",
-        );
+        throw new ConflictException(responseError?.message || 'Unhandled error');
       }
 
       console.error("Register error:", error);
-      throw new InternalServerErrorException("Ошибка при регистрации");
+      throw new InternalServerErrorException(responseError?.message || 'Unhandled error');
     }
   }
 
