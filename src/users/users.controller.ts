@@ -14,6 +14,7 @@ import {
   ApiResponse,
   ApiQuery,
   ApiBearerAuth,
+  ApiBody,
 } from "@nestjs/swagger";
 import { UsersService } from "./users.service";
 import { PaginatedUsersResponse, UpdateUserDto, User } from "@carrent/shared";
@@ -109,6 +110,18 @@ export class UsersController {
 
   @Put("update-user")
   @ApiOperation({ summary: "Updating user" })
+  @ApiBody({
+    type: UpdateUserDto,
+    examples: {
+      default: {
+        value: {
+          email: "update@email.ru",
+          name: "user name",
+          phone: "79999999999"
+        },
+      },
+    }
+  })
   @ApiResponse({
     status: 200,
     description: "User successfully updated",
