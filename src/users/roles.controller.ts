@@ -13,29 +13,6 @@ export class RolesController {
   @ApiResponse({
     status: 200,
     description: "All roles recieved successfully",
-    // type: [User],
-    // example: {
-    //   data: [
-    //     {
-    //       id: "1633487b-8491-4ecf-8603-2aa9c5145377",
-    //       email: "testov2@test.ru",
-    //       name: "teest",
-    //       phone: "79090000000",
-    //       createdAt: "2026-03-19T18:12:34.112Z",
-    //       updatedAt: "2026-03-19T18:12:34.112Z",
-    //       roles: [
-    //         {
-    //           roleName: "user",
-    //           roleDescription: "Пользователь",
-    //         },
-    //       ],
-    //     },
-    //   ],
-    //   total: 107,
-    //   page: 12,
-    //   limit: 10,
-    //   totalPages: 11,
-    // },
   })
   @ApiResponse({ status: 400, description: "Some error has occured" })
   @ApiResponse({ status: 503, description: "Server does not works" })
@@ -102,6 +79,4 @@ export class RolesController {
   async updateRoleByName(@Body() dto: UpdateRoleByNameDto) {
     return this.usersService.updateRoleByName(dto)
   }
-
-
 }

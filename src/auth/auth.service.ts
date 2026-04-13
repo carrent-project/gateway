@@ -1,16 +1,13 @@
-import {
-  Injectable,
-  Inject,
-  UnauthorizedException,
-  ConflictException,
-  ServiceUnavailableException,
-  InternalServerErrorException,
-  NotFoundException,
-  BadRequestException,
-} from "@nestjs/common";
+import { Injectable, Inject } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
 import { firstValueFrom } from "rxjs";
-import { LoginDto, RegisterDto, TokenResponseDto, UpdateUserPasswordDto, UpdateUserRolesDto } from '@carrent/shared';
+import {
+  LoginDto,
+  RegisterDto,
+  TokenResponseDto,
+  UpdateUserPasswordDto,
+} from "@carrent/shared";
+import { handleGatewayError } from "src/utils";
 
 @Injectable()
 export class AuthService {
@@ -22,32 +19,8 @@ export class AuthService {
     try {
       return await firstValueFrom(this.authClient.send("auth.login", dto));
     } catch (error) {
-      console.log("Error from microservice:", JSON.stringify(error, null, 2));
-
-      if (error.code === "ECONNREFUSED") {
-        throw new ServiceUnavailableException(
-          "Сервис авторизации временно недоступен",
-        );
-      }
-
-      const responseError = error.response || error;
-
-      if (responseError?.statusCode === 401) {
-        throw new UnauthorizedException("Неверный email или пароль");
-      }
-
-      if (responseError?.statusCode === 409) {
-        throw new ConflictException(
-          "Пользователь с таким email уже существует",
-        );
-      }
-
-      if (responseError?.message?.includes("Invalid credentials")) {
-        throw new UnauthorizedException("Неверный email или пароль");
-      }
-
-      console.error("Login error:", error);
-      throw new InternalServerErrorException("Произошла ошибка при входе");
+      console.log("[GW] Error from microservice:", JSON.stringify(error, null, 2));
+      throw handleGatewayError(error);
     }
   }
 
@@ -55,64 +28,19 @@ export class AuthService {
     try {
       return await firstValueFrom(this.authClient.send("auth.register", dto));
     } catch (error) {
-      console.log("Error from microservice:", JSON.stringify(error, null, 2));
-
-      if (error.code === "ECONNREFUSED") {
-        throw new ServiceUnavailableException(
-          "Сервис авторизации временно недоступен",
-        );
-      }
-
-      const responseError = error.response || error;
-
-      if (responseError?.statusCode === 409) {
-        throw new ConflictException(responseError?.message || 'Unhandled error');
-      }
-
-      console.error("Register error:", error);
-      throw new InternalServerErrorException(responseError?.message || 'Unhandled error');
+      console.log("[GW] Error from microservice:", JSON.stringify(error, null, 2));
+      throw handleGatewayError(error);
     }
   }
 
   async updateUserPassword(dto: UpdateUserPasswordDto): Promise<string> {
     try {
-      return await firstValueFrom(this.authClient.send("auth.change-password", dto));
+      return await firstValueFrom(
+        this.authClient.send("auth.change-password", dto),
+      );
     } catch (error) {
-      console.log("Error from microservice:", JSON.stringify(error, null, 2));
-
-      if (error.code === "ECONNREFUSED") {
-        throw new ServiceUnavailableException("Сервис авторизации временно недоступен");
-      }
-
-      const statusCode = error.statusCode || error.status;
-
-      if (statusCode === 401) {
-        throw new UnauthorizedException("Invalid old password");
-      }
-
-      if (statusCode === 404) {
-        throw new NotFoundException(`User "${dto.email}" not found`);
-      }
-
-      console.error("Update password error:", error);
-      throw new InternalServerErrorException("Error while PW changing");
-    }
-  }
-
-  async updateUserRoles(dto: UpdateUserRolesDto, userId: string): Promise<{ message: string }> {
-    try {
-      return await firstValueFrom(this.authClient.send('auth.update-roles-list', { dto, userId }))
-    } catch (error) {
-      const responseError = error.response || error;
-      const statusCode = responseError?.statusCode;
-      const message = responseError?.message || 'Update users roles failed';
-
-      if (statusCode === 400) {
-        throw new BadRequestException(message);
-      }
-
-      console.error("Update User roles error:", error);
-      throw new InternalServerErrorException("Error while changing roles");
+      console.log("[GW] Error from microservice:", JSON.stringify(error, null, 2));
+      throw handleGatewayError(error);
     }
   }
 }

@@ -3,7 +3,10 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
+  Post,
   Put,
   Query,
   UseGuards,
@@ -17,7 +20,7 @@ import {
   ApiBody,
 } from "@nestjs/swagger";
 import { UsersService } from "./users.service";
-import { PaginatedUsersResponse, UpdateUserDto, User } from "@carrent/shared";
+import { PaginatedUsersResponse, UpdateUserDto, UpdateUserRolesDto, User } from "@carrent/shared";
 import { AuthGuard } from "../auth/auth.guard";
 
 @ApiTags("Users")
@@ -136,5 +139,31 @@ export class UsersController {
   @ApiResponse({ status: 503, description: "Server does not works" })
   async updateUser(@Body() dto: UpdateUserDto) {
     return this.usersService.updateUser(dto);
+  }
+
+  @Post("update-users-role/:userId")
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: "changing users roles" })
+  @ApiBody({
+    type: UpdateUserRolesDto,
+    examples: {
+      default: {
+        value: {
+          roles: ["user", "admin", "manager"]
+        },
+      },
+    }
+  })
+  @ApiResponse({
+    status: 201,
+    description: "Password has changed",
+  })
+  @ApiResponse({ status: 401, description: "Invalid password or email" })
+  @ApiResponse({ status: 401, description: "Bad request" })
+  @ApiResponse({ status: 503, description: "Service currently is not available" })
+  async updateUserRoles(@Body() dto: UpdateUserRolesDto, @Param("userId") userId: string): Promise<{ message: string }> {
+    return this.usersService.updateUserRoles({dto, userId});
   }
 }
