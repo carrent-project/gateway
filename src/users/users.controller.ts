@@ -73,6 +73,7 @@ export class UsersController {
   }
 
   @Get("user-by-id/:id")
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "Getting user by id" })
   @ApiResponse({
     status: 200,
@@ -100,9 +101,10 @@ export class UsersController {
   }
 
   @Delete("remove-user-by-id/:id")
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: "Removing user by id" })
   @ApiResponse({
-    status: 200,
+    status: 204,
     description: "User successfully removed by id",
   })
   @ApiResponse({ status: 400, description: "Some error has occured" })
