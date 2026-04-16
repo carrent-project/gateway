@@ -2,11 +2,14 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   HttpCode,
   HttpStatus,
   Param,
+  Patch,
   Post,
+  Put,
   Query,
   Req,
   Search,
@@ -21,7 +24,7 @@ import {
   ApiTags,
 } from "@nestjs/swagger";
 import { CarsService } from "./cars.service";
-import { AddCarDto, Car } from "@carrent/shared";
+import { AddCarDto, Car, UpdateCarDto, UpdateCarStatusDto } from "@carrent/shared";
 import { AuthGuard } from "src/auth/auth.guard";
 import { IRequestWithUser } from "src/common/interfaces";
 
@@ -140,18 +143,78 @@ export class CarsController {
     return this.carsService.addCar(dto, ownerId);
   }
 
+  @Put("update-car-common-fields")
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: "Updare cars common fields" })
+  @ApiBody({
+    type: UpdateCarDto,
+    examples: {
+      default: {
+        value: {
+          id: "f9e89372-c994-4655-9adb-e002c81b1c8b",
+          brand: "Toyota",
+          model: "corolla",
+          year: 2025,
+          pricePerDay: 100,
+          description: "Some description",
+          transmission: "auto",
+          fuelType: "petrol",
+          color: "red",
+          location: "Moscow",
+        }
+      }
+    }
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Car has been updated successfully"
+  })
+  @ApiResponse({ status: 400, description: "Some error has occured" })
+  @ApiResponse({ status: 503, description: "Server does not works" })
+  async updateCar(@Body() dto: UpdateCarDto, @Req() req: IRequestWithUser) {
+    const userId = req.user.userId
+    const userRoles = req.user.roles
+    return this.carsService.updateCar(dto)
+  }
+
   @Delete("delete-car-by-id/:id")
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: "Remove car by id" })
-  @ApiResponse({
-    status: 204,
-    description: "Car successfully removed by id",
-  })
+  @ApiResponse({ status: 204, description: "Car successfully removed by id" })
   @ApiResponse({ status: 400, description: "Some error has occured" })
+  @ApiResponse({ status: 404, description: "Car not found" })
   @ApiResponse({ status: 503, description: "Server does not works" })
   async removeCarById(@Param("id") id: string) {
     return this.carsService.removeCarById(id)
+  }
+
+  @Patch('update-car-status/:id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update car status' })
+  @ApiBody({ 
+    type: UpdateCarStatusDto, 
+    examples: {
+      default: {
+        value: {
+          status: "AVAILABLE"
+      }}
+    }
+  })
+  @ApiResponse({ status: 200, description: 'Status updated' })
+  @ApiResponse({ status: 400, description: "One of fields is not valid" })
+  @ApiResponse({ status: 401, description: "User is not authorized" })
+  @ApiResponse({ status: 503, description: "Server does not works" })
+  async updateCarStatus(@Param('id') id: string, @Body() dto: UpdateCarStatusDto, @Req() req: IRequestWithUser) {
+    const userId = req.user.userId;
+    const car = await this.carsService.getCarById(id);
+    if (car.ownerId !== userId && !req.user.roles.includes('admin') && !req.user.roles.includes('manager')) {
+      throw new ForbiddenException('You are not the owner');
+    }
+    return this.carsService.updateCarStatus(id, dto.status);
   }
 }

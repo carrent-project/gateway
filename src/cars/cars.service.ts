@@ -1,4 +1,4 @@
-import { AddCarDto } from '@carrent/shared';
+import { AddCarDto, CarStatus, UpdateCarDto } from '@carrent/shared';
 import { Inject, Injectable } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
 import { firstValueFrom } from "rxjs";
@@ -21,7 +21,15 @@ export class CarsService {
     return await firstValueFrom(this.carsClient.send("cars.add-car", { dto,  ownerId }))
   }
 
+  async updateCar(dto: UpdateCarDto) {
+    return await firstValueFrom(this.carsClient.send("car.update-car", { dto }))
+  }
+
   async removeCarById(id: string) {
     return await firstValueFrom(this.carsClient.send("cars.remove-car-by-id", { id }))
+  }
+
+  async updateCarStatus(id: string, status: CarStatus) {
+    return await firstValueFrom(this.carsClient.send("cars.update-car-status", { id, status }))
   }
 }
