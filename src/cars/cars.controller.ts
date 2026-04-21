@@ -24,7 +24,7 @@ import {
   ApiTags,
 } from "@nestjs/swagger";
 import { CarsService } from "./cars.service";
-import { AddCarDto, Car, UpdateCarDto, UpdateCarStatusDto } from "@carrent/shared";
+import { AddCarDto, Car, UpdateCarDto, UpdateCarFuelTypeDto, UpdateCarStatusDto, UpdateCarTransmissionDto } from "@carrent/shared";
 import { AuthGuard } from "src/auth/auth.guard";
 import { IRequestWithUser } from "src/common/interfaces";
 
@@ -217,4 +217,56 @@ export class CarsController {
     }
     return this.carsService.updateCarStatus(id, dto.status);
   }
+
+  @Patch('update-car-transmission/:id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update car transmission' })
+  @ApiBody({ 
+    type: UpdateCarTransmissionDto, 
+    examples: {
+      default: {
+        value: {
+          transmission: "manual"
+      }}
+    }
+  })
+  @ApiResponse({ status: 200, description: 'Transmission updated' })
+  @ApiResponse({ status: 400, description: "One of fields is not valid" })
+  @ApiResponse({ status: 401, description: "User is not authorized" })
+  @ApiResponse({ status: 503, description: "Server does not works" })
+  async updateCarTransmission(@Param('id') id: string, @Body() dto: UpdateCarTransmissionDto, @Req() req: IRequestWithUser) {
+    const userId = req.user.userId;
+    const car = await this.carsService.getCarById(id);
+    if (car.ownerId !== userId && !req.user.roles.includes('admin') && !req.user.roles.includes('manager')) {
+      throw new ForbiddenException('You are not the owner');
+    }
+    return this.carsService.updateCarTransmission(id, dto.transmission);
+  }
+
+  @Patch('update-car-fuelType/:id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update car fuelType' })
+  @ApiBody({ 
+    type: UpdateCarFuelTypeDto, 
+    examples: {
+      default: {
+        value: {
+          fuelType: "petrol"
+      }}
+    }
+  })
+  @ApiResponse({ status: 200, description: 'FuelType updated' })
+  @ApiResponse({ status: 400, description: "One of fields is not valid" })
+  @ApiResponse({ status: 401, description: "User is not authorized" })
+  @ApiResponse({ status: 503, description: "Server does not works" })
+  async updateCarFuelType(@Param('id') id: string, @Body() dto: UpdateCarFuelTypeDto, @Req() req: IRequestWithUser) {
+    const userId = req.user.userId;
+    const car = await this.carsService.getCarById(id);
+    if (car.ownerId !== userId && !req.user.roles.includes('admin') && !req.user.roles.includes('manager')) {
+      throw new ForbiddenException('You are not the owner');
+    }
+    return this.carsService.updateCarFuelType(id, dto.fuelType);
+  }  
 }
