@@ -1,3 +1,4 @@
+import { CreateBookingDto } from '@carrent/shared';
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from "rxjs";
@@ -8,7 +9,11 @@ export class BookingService {
         @Inject("BOOKING_SERVICE") private readonly bookingClient: ClientProxy
     ) {}
 
-    async sayHi() {
-        return await firstValueFrom(this.bookingClient.send("booking.say-hi", {}))
+    async getBookingList() {
+        return await firstValueFrom(this.bookingClient.send("booking.get-booking-list", {}))
+    }
+
+    async createBooking(dto: CreateBookingDto, userId: string) {
+        return await firstValueFrom(this.bookingClient.send("booking.create-booking", { dto, userId }))
     }
 }
