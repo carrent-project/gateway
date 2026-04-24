@@ -4,6 +4,11 @@ export interface IRequestWithUser extends Request {
   user: {
     userId: string;
     email: string;
-    roles: any[];
+    roles: {
+      roleName: TRoleName,
+      roleDescription: string
+    }[];
   };
 }
+
+export type TRoleName = "user" | "manager" | "admin"

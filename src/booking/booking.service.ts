@@ -9,8 +9,8 @@ export class BookingService {
         @Inject("BOOKING_SERVICE") private readonly bookingClient: ClientProxy
     ) {}
 
-    async getBookingList(page: number, limit: number) {
-        return await firstValueFrom(this.bookingClient.send("booking.get-booking-list", { page, limit }))
+    async getBookingList(page: number, limit: number, status?: EBookingStatus) {
+        return await firstValueFrom(this.bookingClient.send("booking.get-booking-list", { page, limit, status }))
     }
 
     async createBooking(dto: CreateBookingDto, userId: string) {

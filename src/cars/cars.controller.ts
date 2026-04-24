@@ -225,11 +225,9 @@ export class CarsController {
   ) {
     const userId = req.user.userId;
     const car = await this.carsService.getCarById(id);
-    if (
-      car.ownerId !== userId &&
-      !req.user.roles.includes("admin") &&
-      !req.user.roles.includes("manager")
-    ) {
+    const isAdmin = req.user.roles.some((r) => r.roleName === "admin");
+    const isManager = req.user.roles.some((r) => r.roleName === "manager");
+    if (car.ownerId !== userId && !isAdmin && !isManager) {
       throw new ForbiddenException("You are not the owner");
     }
     return this.carsService.updateCarStatus(id, dto.status);
@@ -260,11 +258,9 @@ export class CarsController {
   ) {
     const userId = req.user.userId;
     const car = await this.carsService.getCarById(id);
-    if (
-      car.ownerId !== userId &&
-      !req.user.roles.includes("admin") &&
-      !req.user.roles.includes("manager")
-    ) {
+    const isAdmin = req.user.roles.some((r) => r.roleName === "admin");
+    const isManager = req.user.roles.some((r) => r.roleName === "manager");
+    if (car.ownerId !== userId && !isAdmin && !isManager) {
       throw new ForbiddenException("You are not the owner");
     }
     return this.carsService.updateCarTransmission(id, dto.transmission);
@@ -295,11 +291,9 @@ export class CarsController {
   ) {
     const userId = req.user.userId;
     const car = await this.carsService.getCarById(id);
-    if (
-      car.ownerId !== userId &&
-      !req.user.roles.includes("admin") &&
-      !req.user.roles.includes("manager")
-    ) {
+    const isAdmin = req.user.roles.some((r) => r.roleName === "admin");
+    const isManager = req.user.roles.some((r) => r.roleName === "manager");
+    if (car.ownerId !== userId && !isAdmin && !isManager) {
       throw new ForbiddenException("You are not the owner");
     }
     return this.carsService.updateCarFuelType(id, dto.fuelType);

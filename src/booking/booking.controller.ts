@@ -27,7 +27,7 @@ import {
   EBookingStatus,
   PaginatedBookingResponse,
 } from "@carrent/shared";
-import { IRequestWithUser } from "src/common/interfaces";
+import { IRequestWithUser, TRoleName } from "src/common/interfaces";
 import { AuthGuard } from "src/auth/auth.guard";
 
 @ApiTags("Booking")
@@ -79,16 +79,19 @@ export class BookingController {
   @ApiResponse({ status: 503, description: "Server does not works" })
   @ApiQuery({ name: "page", required: false, type: Number, example: 1 })
   @ApiQuery({ name: "limit", required: false, type: Number, example: 10 })
+  @ApiQuery({ name: "status", required: false, enum: EBookingStatus })
   async getBookingList(
+    @Req() req: IRequestWithUser,
     @Query("page") page: string = "1",
     @Query("limit") limit: string = "10",
-    @Req() req: IRequestWithUser,
+    @Query("status") status?: EBookingStatus,
   ) {
     const roles = req.user.roles.map((role) => role.roleName);
-    if (!roles.includes("admin")) {
-      throw new ForbiddenException("User showd be an admin");
+    const allowedRoles = ['admin', 'manager'];
+    if (!allowedRoles.some(role => roles.includes(role as TRoleName))) {
+      throw new ForbiddenException("User showd be admin or manager");
     }
-    return this.bookingService.getBookingList(+page, +limit);
+    return this.bookingService.getBookingList(+page, +limit, status);
   }
 
   @Post("create-booking")
