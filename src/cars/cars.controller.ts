@@ -182,8 +182,8 @@ export class CarsController {
   @ApiResponse({ status: 400, description: "Some error has occured" })
   @ApiResponse({ status: 503, description: "Server does not works" })
   async updateCar(@Body() dto: UpdateCarDto, @Req() req: IRequestWithUser) {
-    const userId = req.user.userId;
-    const userRoles = req.user.roles;
+    // const userId = req.user.userId;
+    // const userRoles = req.user.roles;
     return this.carsService.updateCar(dto);
   }
 

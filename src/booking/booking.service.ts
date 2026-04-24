@@ -1,4 +1,4 @@
-import { CreateBookingDto } from '@carrent/shared';
+import { CreateBookingDto, EBookingStatus } from '@carrent/shared';
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from "rxjs";
@@ -15,5 +15,13 @@ export class BookingService {
 
     async createBooking(dto: CreateBookingDto, userId: string) {
         return await firstValueFrom(this.bookingClient.send("booking.create-booking", { dto, userId }))
+    }
+
+    async removeBooking(id: string) {
+        return await firstValueFrom(this.bookingClient.send("booking.remove-booking-by-id", { id }))
+    }
+
+    async changeBookingStatus(id: string, newStatus: EBookingStatus, userId: string, isAdmin: boolean) {
+        return await firstValueFrom(this.bookingClient.send("booking.change-booking-status", { id, newStatus, userId, isAdmin }))
     }
 }
