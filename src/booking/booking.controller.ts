@@ -24,6 +24,7 @@ import { BookingService } from "./booking.service";
 import {
   Booking,
   CreateBookingDto,
+  CreateBookingResponse,
   EBookingStatus,
   PaginatedBookingResponse,
 } from "@carrent/shared";
@@ -105,8 +106,8 @@ export class BookingController {
       data: {
         value: {
           carId: "b22ce169-6fc1-43eb-97d6-688419fff84c",
-          startDate: "2025-05-01T10:00:00Z",
-          endDate: "2025-05-01T10:00:00Z",
+          startDate: "2026-05-01T10:00:00Z",
+          endDate: "2026-05-01T10:00:00Z",
         },
       },
     },
@@ -114,6 +115,11 @@ export class BookingController {
   @ApiResponse({
     status: 201,
     description: "Request for creating booking for users car rent",
+    type: CreateBookingResponse,
+    example: {
+      id: "837712c0-2b5e-47f7-8ca0-b31b5b01ccb6",
+      paymentUrl: "http://localhost:3333?paymentId=837712c0-2b5e-47f7-8ca0-b31b5b01ccb6&amount=40000"
+    }
   })
   @ApiResponse({ status: 400, description: "One of fields is not valid" })
   @ApiResponse({ status: 401, description: "User is not authorized" })
