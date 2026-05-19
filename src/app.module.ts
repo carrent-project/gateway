@@ -4,6 +4,7 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { CarsModule } from './cars/cars.module';
 import { BookingModule } from './booking/booking.module';
+import { ReviewsModule } from './reviews/reviews.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { BookingModule } from './booking/booking.module';
     UsersModule,
     CarsModule,
     BookingModule,
+    ReviewsModule,
   ],
   controllers: [],
   providers: [],
