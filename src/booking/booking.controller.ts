@@ -6,6 +6,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Param,
   Patch,
   Post,
   Query,
@@ -94,6 +95,23 @@ export class BookingController {
     }
     return this.bookingService.getBookingList(+page, +limit, status);
   }
+
+  @Get("get-booking-by-id/:id")
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: "Getting booking by id" })
+  @ApiResponse({
+    status: 200,
+    description: "Returns booking entity"
+  })
+  @ApiResponse({ status: 400, description: "One of fields is not valid" })
+  @ApiResponse({ status: 401, description: "User is not authorized" })
+  @ApiResponse({ status: 503, description: "Server does not works" })
+  async getBookingById(@Param("id") id: string) {
+    return await this.bookingService.getBookingById(id)
+  }
+
 
   @Post("create-booking")
   @UseGuards(AuthGuard)

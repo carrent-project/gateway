@@ -13,6 +13,10 @@ export class BookingService {
         return await firstValueFrom(this.bookingClient.send("booking.get-booking-list", { page, limit, status }))
     }
 
+    async getBookingById(id: string) {
+        return await firstValueFrom(this.bookingClient.send("booking.get-booking-by-id", { id }))
+    }
+
     async createBooking(dto: CreateBookingDto, userId: string) {
         return await firstValueFrom(this.bookingClient.send("booking.create-booking", { dto, userId }))
     }
