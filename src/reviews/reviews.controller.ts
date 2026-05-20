@@ -28,16 +28,33 @@ import { IRequestWithUser, TRoleName } from 'src/common/interfaces';
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
-  @Get("reviews-say-hi")
+  @Get("get-review-by-id/:id")
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: "Getting booking list" })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "Getting review by id" })
   @ApiResponse({
     status: 200,
-    description: "Request for test reviews",
+    description: "Request for getting review by id",
+    type: Review,
+    example: {
+      id: "string",
+      bookingId: "2addf832-f31d-4e24-bd4b-5d819f4b9cf8",
+      carId: "16d4d610-d1e5-4892-a9d9-22c8281edbcc",
+      userId: "afc1df82-994d-42f2-8c3e-779468618ee4",
+      rating: 5,
+      comment: "Nullable fiend",
+      isApproved: false,
+      createdAt: "2026-05-19T18:00:11.924Z",
+      updatedAt: "2026-05-19T18:00:11.924Z"
+    }
+
   })
+  @ApiResponse({ status: 401, description: "User is not authorized" })
+  @ApiResponse({ status: 404, description: "Review is not found" })
   @ApiResponse({ status: 503, description: "Server does not works" })
-  async sayHi() {
-    return this.reviewsService.sayHi();
+  async getReviewById(@Param("id") id: string) {
+    return this.reviewsService.getReviewById(id);
   }
 
   @Post("create-review")
@@ -63,15 +80,15 @@ export class ReviewsController {
     description: "Review has been created successfully",
     type: Review,
     example: {
-    id: "string",
-    bookingId: "2addf832-f31d-4e24-bd4b-5d819f4b9cf8",
-    carId: "16d4d610-d1e5-4892-a9d9-22c8281edbcc",
-    userId: "afc1df82-994d-42f2-8c3e-779468618ee4",
-    rating: 5,
-    comment: "Nullable fiend",
-    isApproved: false,
-    createdAt: "2026-05-19T18:00:11.924Z",
-    updatedAt: "2026-05-19T18:00:11.924Z"
+      id: "string",
+      bookingId: "2addf832-f31d-4e24-bd4b-5d819f4b9cf8",
+      carId: "16d4d610-d1e5-4892-a9d9-22c8281edbcc",
+      userId: "afc1df82-994d-42f2-8c3e-779468618ee4",
+      rating: 5,
+      comment: "Nullable fiend",
+      isApproved: false,
+      createdAt: "2026-05-19T18:00:11.924Z",
+      updatedAt: "2026-05-19T18:00:11.924Z"
     }
   })
   @ApiResponse({ status: 400, description: "Some error has occured" })

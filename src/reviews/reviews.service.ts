@@ -13,8 +13,10 @@ export class ReviewsService {
     @Inject("REVIEWS_SERVICE") private readonly reviewsClient: ClientProxy,
   ) {}
 
-  async sayHi() {
-    return await firstValueFrom(this.reviewsClient.send("reviews.say-hi", {}));
+  async getReviewById(id: string) {
+    return await firstValueFrom(
+        this.reviewsClient.send("reviews.get-review-by-id", { id })
+    )
   }
 
   async createNewReview(dto: CreateNewReviewDto, userId: string) {
