@@ -86,18 +86,27 @@ export class ReviewsController {
     return this.reviewsService.getCarReviewsByCarId(carId);
   }
 
-  @Get("get-car-average-rating/:carId")
+  @Post("get-car-average-ratings")
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "Getting cars average rating" })
+  @ApiBody({
+    type: 'object',
+    examples: {
+      default: {
+        value: { carIds: ['car-id-1', 'car-id-2'] },
+        description: 'list of cars idebtificators'
+      },
+    },
+  })
   @ApiResponse({
     status: 200,
-    description: "Request for getting review by id",
-    example: { average: 4, totalReviews: 100 },
+    description: "Request for getting cars average rating",
+    example: [{ carId: '16d4d610-d1e5-4892-a9d9-22c8281edbcc', average: 4, totalReviews: 100 }],
   })
   @ApiResponse({ status: 404, description: "Car is not found" })
   @ApiResponse({ status: 503, description: "Server does not works" })
-  async getCarAverageRating(@Param("carId") carId: string) {
-    return this.reviewsService.getCarAverageRating(carId);
+  async getCarsAverageRating(@Body() data: { carIds: string[] }) {
+    return this.reviewsService.getCarsAverageRating(data.carIds);
   }
 
   @Post("create-review")

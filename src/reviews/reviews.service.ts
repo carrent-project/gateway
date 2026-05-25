@@ -21,9 +21,9 @@ export class ReviewsService {
     );
   }
 
-  async getCarAverageRating(carId: string) {
+  async getCarsAverageRating(carIds: string[]) {
     return await firstValueFrom(
-      this.reviewsClient.send("reviews.get-car-average-rating", { carId }),
+      this.reviewsClient.send("reviews.get-cars-average-rating", { carIds }),
     );
   }
 
