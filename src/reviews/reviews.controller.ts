@@ -23,7 +23,7 @@ import {
 } from "@nestjs/swagger";
 import { ReviewsService } from "./reviews.service";
 import { AuthGuard } from "src/auth/auth.guard";
-import { CreateNewReviewDto, Review } from "@carrent/shared";
+import { BaseReviewData, CreateNewReviewDto, PaginatedReviewsResponse, Review } from "@carrent/shared";
 import { IRequestWithUser, TRoleName } from "src/common/interfaces";
 
 @ApiTags("Reviews")
@@ -90,24 +90,65 @@ export class ReviewsController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "Getting cars average rating" })
   @ApiBody({
-    type: 'object',
+    type: "object",
     examples: {
       default: {
-        value: { carIds: ['car-id-1', 'car-id-2'] },
-        description: 'list of cars idebtificators'
+        value: { carIds: ["car-id-1", "car-id-2"] },
+        description: "list of cars idebtificators",
       },
     },
   })
   @ApiResponse({
     status: 200,
     description: "Request for getting cars average rating",
-    example: [{ carId: '16d4d610-d1e5-4892-a9d9-22c8281edbcc', average: 4, totalReviews: 100 }],
+    example: [
+      {
+        carId: "16d4d610-d1e5-4892-a9d9-22c8281edbcc",
+        average: 4,
+        totalReviews: 100,
+      },
+    ],
   })
   @ApiResponse({ status: 404, description: "Car is not found" })
   @ApiResponse({ status: 503, description: "Server does not works" })
   async getCarsAverageRating(@Body() data: { carIds: string[] }) {
     return this.reviewsService.getCarsAverageRating(data.carIds);
   }
+
+  @Get("get-car-reviews-by-id/:carId")
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: "Getting car reviews by id" })
+  @ApiResponse({
+    status: 200,
+    description: "Getting car reviews by id",
+    type: [BaseReviewData],
+    example: {
+      data: [
+        {
+          id: "1633487b-8491-4ecf-8603-2aa9c5145377",
+          rating: 5,
+          comment: "Nullable comment",
+          createdAt: "2026-03-19T18:12:34.112Z",
+        },
+      ],
+      total: 777,
+      page: 1,
+      limit: 10,
+      totalPages: 78,
+    },
+  })
+  @ApiResponse({ status: 503, description: "Server does not works" })
+  @ApiQuery({ name: "page", required: false, type: Number, example: 1 })
+  @ApiQuery({ name: "limit", required: false, type: Number, example: 10 })
+  async getCarReviewsById(
+    @Param("carId") carId: string,
+    @Query("page") page: string = "1",
+    @Query("limit") limit: string = "10",
+  ): Promise<PaginatedReviewsResponse> {
+    return this.reviewsService.getCarReviewsById(carId, +page, +limit)
+  }
+
+
 
   @Post("create-review")
   @HttpCode(HttpStatus.CREATED)
@@ -189,7 +230,10 @@ export class ReviewsController {
   })
   @ApiResponse({ status: 400, description: "Some error has occured" })
   @ApiResponse({ status: 401, description: "User is not authorized" })
-  @ApiResponse({ status: 403, description: "User role is forbidden, only admin or manager are allowed" })
+  @ApiResponse({
+    status: 403,
+    description: "User role is forbidden, only admin or manager are allowed",
+  })
   @ApiResponse({ status: 503, description: "Server does not works" })
   @ApiQuery({
     name: "isApproved",
@@ -207,7 +251,7 @@ export class ReviewsController {
     if (!allowedRoles.some((role) => roles.includes(role as TRoleName))) {
       throw new ForbiddenException("User showd be admin or manager");
     }
-    const isApprovedBoolean = isApproved === 'true'
-    return await this.reviewsService.approveReview(id, isApprovedBoolean)
+    const isApprovedBoolean = isApproved === "true";
+    return await this.reviewsService.approveReview(id, isApprovedBoolean);
   }
 }

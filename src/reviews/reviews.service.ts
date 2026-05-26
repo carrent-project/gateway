@@ -27,6 +27,12 @@ export class ReviewsService {
     );
   }
 
+  async getCarReviewsById(carId: string, page: number, limit: number) {
+    return await firstValueFrom(
+      this.reviewsClient.send("reviews.get-car-reviews-by-id", { carId, page, limit })
+    )
+  }
+
   async createNewReview(dto: CreateNewReviewDto, userId: string) {
     return await firstValueFrom(
       this.reviewsClient.send("reviews.create-review", { dto, userId }),
